@@ -1,4 +1,7 @@
-% Play ground
+% Write Logs to screen and file.
+%
+% Contact: dante.peng@gmail.com
+% Copyright (c) Peng Peng
 function WriteLog(str)
 fprintf('%s\n', str);
 fid = fopen('Logs.txt', 'at');
