@@ -1,4 +1,4 @@
-%% This if the file that contains all the code necessary for
+%% This is the file that contains all the code necessary for
 % spatiotemporal orientation analysis
 %
 % Name: Peng Peng
@@ -28,7 +28,13 @@ nFrame = size(v1,3);
 overlap = 6; %default: 2*filter_half_width;
 chunkSize =  13;
 step = chunkSize - overlap;
-nChunk = ceil((nFrame-2*filter_half_width) / step)
+nChunk = ceil((nFrame-2*filter_half_width) / step);
+if(nChunk <= 0)
+    error('nChunk = %d\n', nChunk);
+else
+    fprintf('nChunk = %d\n', nChunk);
+end
+    
 nValidScores = nChunk;
 qPF = zeros(nValidScores, 100);
 scorePos = [0 0];

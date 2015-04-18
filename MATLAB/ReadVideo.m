@@ -16,6 +16,7 @@ function video = ReadVideo(yuv_path, mat_path, filename, size, scale)
         save(mat_file, 'video');
     else
         fprintf('Loading video from %s...\n', mat_file);
-        video = load(mat_file);
+        video_struct = load(mat_file);
+        video = video_struct.video;
     end
 end
