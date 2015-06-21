@@ -1,3 +1,6 @@
 MATLAB/Dec22.txt
 *.txt
 MATLAB/TestLiveMobile.asv
+VQA.sdf
+*.suo
+VQA/VQA.vcxproj.filters
