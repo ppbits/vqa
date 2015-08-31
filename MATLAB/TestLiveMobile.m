@@ -30,9 +30,9 @@ else
     selected_videos = (dist_types == dist_type);
 end
 
-if STRCMP(mode, 'mobile')
+if strcmp(mode, 'mobile')
     dmos = dmos_mobile(selected_videos);
-elseif STRCMP(mode, 'tablet')
+elseif strcmp(mode, 'tablet')
     dmos = dmos_table(selected_videos);
 else
     error('Wrong mode. Please select mobile or tablet.');
