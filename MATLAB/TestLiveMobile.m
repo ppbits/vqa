@@ -2,7 +2,10 @@
 %
 % Contact: dante.peng@gmail.com
 % Copyright (c) Peng Peng
-function TestLiveMobile(dist_type)
+function TestLiveMobile(dist_type, mode)
+if nargin < 2
+    mode = 'mobile'
+end
 if nargin < 1
     dist_type = 0;
 end
@@ -27,7 +30,14 @@ else
     selected_videos = (dist_types == dist_type);
 end
 
-dmos = dmos_mobile(selected_videos);
+if STRCMP(mode, 'mobile')
+    dmos = dmos_mobile(selected_videos);
+elseif STRCMP(mode, 'tablet')
+    dmos = dmos_table(selected_videos);
+else
+    error('Wrong mode. Please select mobile or tablet.');
+end
+    
 ref_filenames = refnames_all(selected_videos);
 dist_filenames = dist_names(selected_videos);
 nfile = length(dist_filenames);
