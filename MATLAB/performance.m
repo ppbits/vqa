@@ -1,4 +1,7 @@
-function [srcc, krcc, plcc, RMSE] = performance(predictions, dmos, selected_videos, tag)
+function [srcc, krcc, plcc, RMSE] = performance(predictions, dmos, selected_videos, tag, printToFile)
+if(argin < 5>)
+    printToFile = false;
+end
 if nargin < 4
     tag = 'Performance';
 end
@@ -32,10 +35,14 @@ plcc = corr(mos, ypre, 'type','Pearson'); %pearson linear coefficient
 fprintf([tag ':\tSRCC = %3.4f, KRCC = %3.4f, PLCC = %3.4f, RMSE = %3.4f\n'], ...
     abs(srcc), abs(krcc), abs(plcc), RMSE);
 %
-fid = fopen('Results.txt', 'a');
-if fid~=0
-    fprintf(fid, [tag ':\tSRCC = %3.4f, KRCC = %3.4f, PLCC = %3.4f, RMSE = %3.4f\r\n'], ...
-        abs(srcc), abs(krcc), abs(plcc), abs(RMSE));
+
+if printToFile
+    fid = fopen('Results.txt', 'a');
+    if fid~=0
+        fprintf(fid, [tag ':\tSRCC = %3.4f, KRCC = %3.4f, PLCC = %3.4f, RMSE = %3.4f\r\n'], ...
+            abs(srcc), abs(krcc), abs(plcc), abs(RMSE));
+    
+    end
+    fprintf(fid, '\r\n');
+    fclose(fid);
 end
-fprintf(fid, '\r\n');
-fclose(fid);
