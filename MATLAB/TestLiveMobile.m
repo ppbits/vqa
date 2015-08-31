@@ -33,7 +33,7 @@ end
 if strcmp(mode, 'mobile')
     dmos = dmos_mobile(selected_videos);
 elseif strcmp(mode, 'tablet')
-    dmos = dmos_table(selected_videos);
+    dmos = dmos_tablet(selected_videos);
 else
     error('Wrong mode. Please select mobile or tablet.');
 end
