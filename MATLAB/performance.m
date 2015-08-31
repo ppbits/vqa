@@ -1,5 +1,5 @@
 function [srcc, krcc, plcc, RMSE] = performance(predictions, dmos, selected_videos, tag, printToFile)
-if argin < 5
+if nargin < 5
     printToFile = false;
 end
 if nargin < 4
