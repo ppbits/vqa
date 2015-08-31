@@ -4,14 +4,14 @@
 % Copyright (c) Peng Peng
 function TestLiveMobile(dist_type, mode)
 if nargin < 2
-    mode = 'mobile'
+    mode = 'mobile';
 end
 if nargin < 1
     dist_type = 0;
 end
 
 %% Prepare Data
-data_path = 'D:\pengp\LiveMobileVQA';
+data_path = '\\bluebell\vml2\pengp\LiveMobileVQA';
 yuv_path = fullfile(data_path, 'YUV');
 mat_path = fullfile(data_path, 'MAT');
 score_path = '\\bluebell\vml2\pengp\LiveMobileVQA\scores';
