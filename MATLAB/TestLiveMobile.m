@@ -75,7 +75,7 @@ for scale = [64 128 256]
     final_mScore_all = spatial_mScore_all .* motion_mScore_all;
     final_tpScore_all = spatial_tpScore_all .* motion_tpScore_all;
     
-    fprintf('cale = %d\n', scale);
+    fprintf('Scale = %d\n', scale);
     
     performance(spatial_mScore_all, dmos, true(nfile, 1), 'M->Spatial');
     performance(motion_mScore_all, dmos, true(nfile, 1), 'M->Motion');
