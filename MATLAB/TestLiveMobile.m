@@ -11,10 +11,10 @@ if nargin < 1
 end
 
 %% Prepare Data
-data_path = '\\bluebell\vml2\pengp\LiveMobileVQA';
+data_path = '/cs/vml2/pengp/LiveMobileVQA';
 yuv_path = fullfile(data_path, 'YUV');
 mat_path = fullfile(data_path, 'MAT');
-score_path = '\\bluebell\vml2\pengp\LiveMobileVQA\scores';
+score_path = fullfile(data_path, 'scores');
 
 frame_size = [720 1280];
 % Load 'dist_names', 'org_names', and 'refnames_all'.
