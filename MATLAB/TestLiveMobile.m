@@ -17,10 +17,13 @@ mat_path = fullfile(data_path, 'MAT');
 score_path = fullfile(data_path, 'scores');
 
 frame_size = [720 1280];
+
 % Load 'dist_names', 'org_names', and 'refnames_all'.
 load(fullfile(data_path, 'names.mat'));
+
 % Load 'dmos_mobile', 'dmos_tablet', 'std_dmos_mobile', 'std_dmos_tablet'.
 load(fullfile(data_path, 'dmos_final.mat'));
+
 % Get distortion types
 dist_types = GetDistortionTypes('LiveMobile');
 
