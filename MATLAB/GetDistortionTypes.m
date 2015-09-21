@@ -1,7 +1,10 @@
-% This code gets a distortion types array for a database.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Gets a vector representing the distortion types of all distorted videos in a database
 %
+% Name: Peng Peng
 % Contact: dante.peng@gmail.com
-% Copyright (c) Peng Peng
+% Date: Sept 20, 2015
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function dist_types = GetDistortionTypes(database, n)
 
 fprintf('Getting distortion types for the %s database...\n', database);

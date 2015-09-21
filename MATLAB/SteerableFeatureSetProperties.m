@@ -1,3 +1,14 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ---
+% Written by: Konstantinos G. Derpanis
+% PhD Candidate
+% York University
+% Toronto, Ontario, Canada
+% Bugs/Questions email me at: kosta@cs.yorku.ca
+% see York Universtiy Technical Report CS-2004-05 for analytic details
+%   located here: http://www.cs.yorku.ca/techreports/2004/CS-2004-05.html
+% ---
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [nOrient, allOrient, energyEps] = SteerableFeatureSetProperties(featureSet)
 % return various properties accosiated with the featureSet used for
 % steerable filter responses histogram

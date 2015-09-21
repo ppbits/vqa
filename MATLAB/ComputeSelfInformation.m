@@ -1,3 +1,10 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Computes self-information
+%
+% Name: Peng Peng
+% Contact: dante.peng@gmail.com
+% Date: Sept 20, 2015
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function volSI = ComputeSelfInformation(volSE, nbin, gfilter)
 if nargin < 3 % Apply Gaussian filter
     gfilter = true;

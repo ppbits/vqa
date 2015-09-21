@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Attention Guided and Motion Tuned Quality
+% Compute Attention Guided and Motion Tuned Quality based on Spatiotemporal Orientation Analysis
 %
 % Name: Peng Peng
 % Contact: dante.peng@gmail.com
@@ -8,7 +8,6 @@
 function [q, qPF] =  ComputeMotionQuality(v1, v2, applyMotionTuning, applySaliency)
 %% parameter setting
 orientationSet = 2;
-[~, allOrientations, ~] = SteerableFeatureSetProperties(orientationSet);
 G2H2OrG3 = 1; % G3 filter
 filter_half_width = 6;
 doMarginalize = 2;
@@ -22,14 +21,19 @@ overlap = 0; %default: 2*filter_half_width;
 chunkSize =  13;
 step = chunkSize - overlap;
 nChunk = ceil((nFrame-2*filter_half_width) / step);
+
 if(nChunk <= 0)
     error('nChunk = %d\n', nChunk);
 else
     fprintf('nChunk = %d\n', nChunk);
 end
+
 nValidScores = nChunk;
 qPF = zeros(nValidScores, 1);
 scorePos = [0 0];
+
+[~, allOrientations, ~] = SteerableFeatureSetProperties(orientationSet);
+
 for c = 1 : nChunk
 %    fprintf('Processing Chunk %d\n', c);
     chunkStartPos = 1+(c-1)*step;

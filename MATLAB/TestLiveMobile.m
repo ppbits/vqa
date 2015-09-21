@@ -1,7 +1,10 @@
-% This code tests the algorithm on the Live Mobile VQA Database.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Evaluate on the LIVE Mobile VQA Database
 %
+% Name: Peng Peng
 % Contact: dante.peng@gmail.com
-% Copyright (c) Peng Peng
+% Date: Sept 20, 2015
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function TestLiveMobile(dist_type, mode)
 if nargin < 2
     mode = 'mobile';
