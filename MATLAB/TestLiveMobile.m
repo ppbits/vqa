@@ -11,82 +11,89 @@ if nargin < 1
 end
 
 %% Prepare Data
-data_path = '/cs/vml2/pengp/LiveMobileVQA';
+if isunix
+    data_path = '/cs/vml2/pengp/LiveMobileVQA';
+else
+    data_path = '\\bluebell\vml2\pengp\LiveMobileVQA';
+end
+    
 yuv_path = fullfile(data_path, 'YUV');
 mat_path = fullfile(data_path, 'MAT');
 score_path = fullfile(data_path, 'scores');
 
 frame_size = [720 1280];
 
-% Load 'dist_names', 'org_names', and 'refnames_all'.
+% Load 'dist_names', 'org_names', and 'refnames_all', 'names_tablet'.
 load(fullfile(data_path, 'names.mat'));
+load(fullfile(data_path, 'names_tablet.mat'));
 
 % Load 'dmos_mobile', 'dmos_tablet', 'std_dmos_mobile', 'std_dmos_tablet'.
 load(fullfile(data_path, 'dmos_final.mat'));
 
-% Get distortion types
-dist_types = GetDistortionTypes('LiveMobile');
-
-if dist_type == 0
-    selected_videos = true(length(dmos_mobile),1);
-else
-    selected_videos = (dist_types == dist_type);
-end
-
 if strcmp(mode, 'mobile')
-    dmos = dmos_mobile(selected_videos);
+    dmos_all = dmos_mobile;
+    dist_names_all = dist_names;
 elseif strcmp(mode, 'tablet')
-    dmos = dmos_tablet(selected_videos);
+    dmos_all = dmos_tablet;
+    dist_names_all = names_tablet;
 else
     error('Wrong mode. Please select mobile or tablet.');
 end
-    
-ref_filenames = refnames_all(selected_videos);
+
+total_file_num = length(dist_names_all);
+
+% Get distortion types
+dist_types = GetDistortionTypes('LiveMobile', total_file_num);
+ 
+if dist_type == 0
+    selected_videos = true(total_file_num,1);
+elseif dist_type > 0
+    selected_videos = (dist_types == dist_type);
+else
+    selected_videos = (dist_types ~= abs(dist_type));
+end
+
+dmos = dmos_all(selected_videos);
 dist_filenames = dist_names(selected_videos);
 nfile = length(dist_filenames);
 fprintf('Selected videos: %d.\nDistortion type: %d.\n', nfile, dist_type);
 
-%% Load spatial quality
-load(fullfile(score_path, 'liveM_MSSIM.mat'));
+%% Load spatial quality (Multi-scale SSIM)
+load(fullfile(score_path, 'liveM_MSSIM.mat')); 
 spatial_scorePF_all = scoresPerFrameAll(selected_videos);
 spatial_mScore_all = 1 - mScoreAll(selected_videos);
 
 %% Compute Overall Quality
-spatial_tpScore_all = zeros(nfile, 1);
 motion_mScore_all = zeros(nfile, 1);
-motion_tpScore_all = zeros(nfile, 1);
-column = 2;
 
-for scale = [64 128 256]
+for scale = [64 ] %128 256]
     motion_score_folder = fullfile(score_path, int2str(scale));
     if(~isdir(motion_score_folder))
         fprintf('Creating score folder %s...\n', motion_score_folder);
         mkdir(motion_score_folder);
     end
     for i = 1:nfile
-        ref_filename = strcat(ref_filenames{i}, '_org');
+	% Get the distorted file name
         dist_filename = dist_filenames{i};
-        [mScore, scorePF] = GetMotionScores(motion_score_folder, ref_filename, dist_filename);
-        
-        motion_mScore_all(i) = mScore(column);
-        
-        % Temproal pooling
-        lambda1 = 1.5; beta = 1; lambda2 = 0.5;
-        motion_tpScore_all(i) = temporalPooling(scorePF(:, column), lambda1, beta, lambda2);
-        spatial_tpScore_all(i) = temporalPooling(1-spatial_scorePF_all{i}, lambda1, beta, lambda2);
+	% Get the original/reference file name based on the distorted file name
+        ref_filename = strcat(dist_filenames{i}(1:2), '_org');
+
+	% Get per-frame moiton-quality scores ('scorePF') and the overall quality score ('mScore')
+	% 'mScore' is the mean value of 'scorePF' over each column
+        [mScore, scorePF] = GetMotionScores(motion_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename, scale);
+
+	disp(size(mScore));
+	% Select the metric
+        motion_mScore_all(i) = mScore;
     end
+
+    % Combine the spatial quality score and motion quality score
     final_mScore_all = spatial_mScore_all .* motion_mScore_all;
-    final_tpScore_all = spatial_tpScore_all .* motion_tpScore_all;
     
     fprintf('Scale = %d\n', scale);
-    
-    performance(spatial_mScore_all, dmos, true(nfile, 1), 'M->Spatial');
-    performance(motion_mScore_all, dmos, true(nfile, 1), 'M->Motion');
-    performance(final_mScore_all, dmos, true(nfile, 1), 'M->Product');
-    
-    performance(spatial_tpScore_all, dmos, true(nfile, 1), 'TP->Spatial');
-    performance(motion_tpScore_all, dmos, true(nfile, 1), 'TP->Motion');
-    performance(final_tpScore_all, dmos, true(nfile, 1), 'TP->Product');
+    Performance(spatial_mScore_all, dmos, true(nfile, 1), strcat('Spatial-', int2str(scale)));
+    Performance(motion_mScore_all, dmos, true(nfile, 1), strcat('Motion-', int2str(scale)));
+    Performance(final_mScore_all, dmos, true(nfile, 1), strcat('Overall-', int2str(scale)));
 end
 
 fprintf('\nDone!\n');

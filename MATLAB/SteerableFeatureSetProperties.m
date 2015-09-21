@@ -1,4 +1,4 @@
-function [nOrient, allOrient, energyEps] = steerableFeatureSetProperties(featureSet)
+function [nOrient, allOrient, energyEps] = SteerableFeatureSetProperties(featureSet)
 % return various properties accosiated with the featureSet used for
 % steerable filter responses histogram
 

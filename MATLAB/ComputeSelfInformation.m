@@ -1,4 +1,4 @@
-function volSI = computeSelfInfo(volSE, nbin, gfilter)
+function volSI = ComputeSelfInformation(volSE, nbin, gfilter)
 if nargin < 3 % Apply Gaussian filter
     gfilter = true;
 end
@@ -20,7 +20,7 @@ for i = 1: nFeature-1
     for j = 1:nFrame
         frame = volSE{i}(:,:,j);
         frame = frame(:);
-        [n, bin] = densityEstimate(frame, nbin);
+        [n, bin] = DensityEstimate(frame, nbin);
         p = n/w/h;% probability distribution
         pixel_p = p(bin); % probability of the value at each pixel
         joint_p(:, j) = weights(i) * joint_p(:, j) .* pixel_p; % joint probability over all features (at each pixel)
@@ -42,7 +42,7 @@ end
 end
 
 % 1000 bin histogram density estimate
-function [n, bin] = densityEstimate(img, nbin)
+function [n, bin] = DensityEstimate(img, nbin)
 minVal = min(img(:));
 maxVal  = max(img(:));
 % [f, xi] = ksdensity(img(:));

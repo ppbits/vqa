@@ -1,132 +1,5 @@
-%% This if the file that contains all the code necessary for
-% spatiotemporal orientation analysis
-%
-% Name: Peng Peng
-% Contact: pengp@sfu.ca
-% Date: Nov 17, 2012
-
-%% Notes
-% The size of filter
-% Normalize energy at a small area or not?  (agg_size)
-
-
-function [q qPF] =  AttentionGuidedPureMotionQuality(v1, v2, orientationSet)
-%% parameter setting
-if nargin < 3
-   orientationSet = 2;
-end
-[~, allOrientations, ~] = steerableFeatureSetProperties(orientationSet);
-G2H2OrG3 = 1; % G3 filter
-filter_half_width = 6;
-
-t_se_start =tic;
-fprintf('Computing spatiotemporal energies for the reference video...\n');
-doMarginalize = 2;
-
-h = size(v1,1);
-w = size(v1,2);
-nFrame = size(v1,3);
-step = 25;
-chunkSize = step+ 2*filter_half_width;
-nChunk = ceil((nFrame-2*filter_half_width) / step);
-nChannel = size(allOrientations, 1)+1;
-volSE1 = cell(nChannel, 2);
-volSE1_n = cell(nChannel, 2);
-volSE2_n = cell(nChannel, 2);
-
-nValidScores = nFrame-2*filter_half_width;
-for i = 1:nChannel
-    for j = 1:2 % marginalized + unmarginalized
-        volSE1{i,j} = zeros(h,w, nValidScores);
-        volSE1_n{i,j} = zeros(h,w,nValidScores);
-    end
-end
-
-scorePos = [0 0];
-for c = 1 : nChunk
-%     fprintf('Processing Chunk %d\n', c);
-    chunkStartPos = 1+(c-1)*step;
-    chunkEndPos = chunkStartPos + chunkSize;
-    if chunkEndPos > nFrame % the last chunk bounded by the last frame of the video 
-        chunkEndPos = nFrame;
-    end
-    chunkRange = chunkStartPos:chunkEndPos;
-    [temp1, temp2] = spacetimeOrientationAnalysis(...
-        v1(:,:,chunkRange), allOrientations, ...
-        G2H2OrG3, doMarginalize, filter_half_width);
-    scorePos(1) = scorePos(2) + 1;
-    scorePos(2) = scorePos(1) + size(temp1{i,j},3)-1;
-    scoreRange = scorePos(1):scorePos(2);
-    for i = 1:nChannel
-        for j = 1:2
-            volSE1{i,j}(:,:,scoreRange) = temp1{i,j};
-            volSE1_n{i,j}(:,:,scoreRange) = temp2{i,j};
-        end
-    end
-    clear temp1 temp2
-end
-t_se_end = toc(t_se_start);
-fprintf('Done! Elapsed time %3.4f seconds.\n', t_se_end);
-clear v1
-
-
-fprintf('computing self-information map...\n');	
-t_si_start = tic;
-appCenterBias = false;
-nBin = 1000; nBin_n = 10;
-appGaussianFilter = true;
-volSI = getSaliencyVol(volSE1(:, 2), appCenterBias, nBin, appGaussianFilter);
-clear volSE1
-volSI_n = getSaliencyVol(volSE1_n(:, 2), appCenterBias, nBin_n, appGaussianFilter);
-t_si_end = toc(t_si_start);
-fprintf('Done! Elapsed time %3.4f seconds.\n', t_si_end);
-volSI = applyCenterBias(volSI .* volSI_n);
-clear volSI_n
-
-fprintf('Computing spatiotemporal energies for the distorted video...\n');
-doMarginalize = 2;
-for i = 1:nChannel
-    for j = 1:2 % marginalized + unmarginalized
-        volSE2_n{i,j} = zeros(h,w,nValidScores);
-    end
-end
-scorePos = [0 0];
-for c = 1 : nChunk
-%     fprintf('Processing Chunk %d\n', c);   
-    chunkStartPos = 1+(c-1)*step;
-    chunkEndPos = chunkStartPos + chunkSize;
-    if chunkEndPos > nFrame % the last chunk bounded by the last frame of the video 
-        chunkEndPos = nFrame;
-    end
-    chunkRange = chunkStartPos:chunkEndPos;
-    [~, temp2] = spacetimeOrientationAnalysis(...
-        v2(:,:,chunkRange), allOrientations, ...
-        G2H2OrG3, doMarginalize, filter_half_width);
-    scorePos(1) = scorePos(2) + 1;
-    scorePos(2) = scorePos(1) + size(temp2{i,j},3)-1;
-    scoreRange = scorePos(1):scorePos(2);
-    for i = 1:nChannel
-        for j = 1:2
-            volSE2_n{i,j}(:,:,scoreRange) = temp2{i,j};
-        end
-    end
-    clear temp2
-end
-
-
-t_se_end = toc(t_se_start);
-fprintf('Elasped time on computing spatiotemporal energies: %3.4f seconds.\n', t_se_end);
-clear v2
-
-fprintf('computing similarity...\n');
-t1 = tic;
-[q, qPF] = computeSimilarity2(volSE1_n, volSE2_n, volSI);
-t2 = toc(t1);
-fprintf('Elapsed time on calculating similarity: %3.4f seconds\n', t2);
-end
-
-
-function [volSE, volSE_n] = spacetimeOrientationAnalysis(videoVol, allOrientations, G2H2OrG3, ...
+function [volSE, volSE_n] = SpatiotemporalOrientationAnalysis(...
+    videoVol, allOrientations, G2H2OrG3, ...
     doMarginalize, filter_half_width)
 if nargin < 5
     filter_half_width = 6;
@@ -281,7 +154,7 @@ end
 
 if doMarginalize <= 1
     nColumn = 1;
-else
+elseif doMarginalize == 2
     nColumn = 2;
 end
 
@@ -290,30 +163,35 @@ E = cell(nOrientations, nColumn);
 % compute base energies
 for e = 1:nOrientations-1
     if(doMarginalize == 1)
-        E{e} = imgComputeSpacetimeOrientationEnergyG3(G3, orientations(e,1), orientations(e,2), orientations(e,3), agg_size);
+        E{e, 1} = imgComputeSpacetimeOrientationEnergyG3(G3, orientations(e,1), orientations(e,2), orientations(e,3), agg_size);
     elseif(doMarginalize == 0)
-        E{e} = imgComputeSOEsG3_NoMarginalize(G3, orientations(e,:), agg_size);
-    elseif doMarginalize == 2
         E{e, 1} = imgComputeSOEsG3_NoMarginalize(G3, orientations(e,:), agg_size);
-        E{e, 2} = imgComputeSpacetimeOrientationEnergyG3(G3, orientations(e,1), orientations(e,2), orientations(e,3), agg_size);
+    elseif doMarginalize == 2
+        [E{e, 1}, E{e,2}]= imgComputeSpacetimeOrientationEnergyG3(G3, orientations(e,1), orientations(e,2), orientations(e,3), agg_size);
     end
 end
 
-for j = 1:nColumn
-    E{nOrientations, j} = epsilon*ones(size(E{1,1})); % last orientation is always epsilon
+E{nOrientations, 1} = epsilon*ones(size(E{1,1})); % last orientation is always epsilon
+% last orientation is always epsilon
+temp = cell(4,1);
+for i = 1:4
+    temp{i,1} = epsilon*ones(size(E{1,1}));
 end
+E{nOrientations, 2} = temp;
 
 % normalize, if nt needed
-E_n = E;
-if (agg_size >= 0)
-    for j = 1:nColumn
-        Esum = E{1, j};
-        for e = 2:nOrientations
-            Esum = Esum + E{e, j};
-        end
-        for e = 1:nOrientations
-            E_n{e, j} = E{e, j}./Esum;
-        end
+E_n = cell(nOrientations, nColumn);
+Esum = E{1, 1};
+for e = 2:nOrientations
+    Esum = Esum + E{e, 1};
+end
+
+for e = 1:nOrientations
+    E_n{e, 1} = E{e, 1}./Esum;
+end
+for e = 1:nOrientations
+    for sub_channel = 1:4 % four equally spaced directions on the plane
+        E_n{e, 2}{sub_channel,1} = E{e,2}{sub_channel,1} ./ Esum;
     end
 end
 end
@@ -347,7 +225,9 @@ end
 end
 
 
-function [motion_energy] = imgComputeSpacetimeOrientationEnergyG3(G3, u, v, w, agg_size)
+function [motion_energy, energy4channel] = imgComputeSpacetimeOrientationEnergyG3(G3, u, v, w, agg_size)
+% N+1 equally spaced directions
+energy4channel = cell(4,1);
 
 if (nargin < 5 || isempty(agg_size))
     agg_size = 13;
@@ -374,23 +254,40 @@ ub = ub/norm(ub);
 
 % if you need more speed, should be able to uncomment this and it will use
 % the mexx function (speeds things up roughly by a factor of 2)
-if ~isempty(dir('./G3/imgSteer3DG3_fast.mex*'))
-    %    use fast addition version
-    motion_energy = ...
-        imgSteer3DG3_fast(single(cos(0)*ua'     + sin(0)*ub'     ), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2 + ...
-        imgSteer3DG3_fast(single(cos(1*pi/4)*ua'+ sin(1*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2 + ...
-        imgSteer3DG3_fast(single(cos(2*pi/4)*ua'+ sin(2*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2 + ...
-        imgSteer3DG3_fast(single(cos(3*pi/4)*ua'+ sin(3*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2;
+if ~isempty(dir('../doesnotexist/imgSteer3DG3_fast.mex*')) % some time get Inf and NAN results
+%     fprintf('fast');
+    %    use fast addition version    
+    energy4channel{1} = imgSteer3DG3_fast(single(cos(0)*ua'     + sin(0)*ub'     ), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2;
+    energy4channel{2} = imgSteer3DG3_fast(single(cos(1*pi/4)*ua'+ sin(1*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2;
+    energy4channel{3} = imgSteer3DG3_fast(single(cos(2*pi/4)*ua'+ sin(2*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2;
+    energy4channel{4} = imgSteer3DG3_fast(single(cos(3*pi/4)*ua'+ sin(3*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2;
+    
+%     motion_energy = ...
+%         imgSteer3DG3_fast(single(cos(0)*ua'     + sin(0)*ub'     ), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2 + ...
+%         imgSteer3DG3_fast(single(cos(1*pi/4)*ua'+ sin(1*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2 + ...
+%         imgSteer3DG3_fast(single(cos(2*pi/4)*ua'+ sin(2*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2 + ...
+%         imgSteer3DG3_fast(single(cos(3*pi/4)*ua'+ sin(3*pi/4)*ub'), G3.a,G3.b,G3.c,G3.d,G3.e,G3.f,G3.g,G3.h,G3.i,G3.j).^2;
 else
-    motion_energy = imgSteer3DG3(cos(0)*ua'      + sin(0)*ub'     , G3).^2 + ...
-        imgSteer3DG3(cos(1*pi/4)*ua' + sin(1*pi/4)*ub', G3).^2 + ...
-        imgSteer3DG3(cos(2*pi/4)*ua' + sin(2*pi/4)*ub', G3).^2 + ...
-        imgSteer3DG3(cos(3*pi/4)*ua' + sin(3*pi/4)*ub', G3).^2;
+%     fprintf('no fast');
+    energy4channel{1} =  imgSteer3DG3(cos(0)*ua'      + sin(0)*ub'     , G3).^2 ;
+    energy4channel{2} =   imgSteer3DG3(cos(1*pi/4)*ua' + sin(1*pi/4)*ub', G3).^2;
+    energy4channel{3} =  imgSteer3DG3(cos(2*pi/4)*ua' + sin(2*pi/4)*ub', G3).^2;
+    energy4channel{4} =   imgSteer3DG3(cos(3*pi/4)*ua' + sin(3*pi/4)*ub', G3).^2;
+    
+%         motion_energy = imgSteer3DG3(cos(0)*ua'      + sin(0)*ub'     , G3).^2 + ...
+%         imgSteer3DG3(cos(1*pi/4)*ua' + sin(1*pi/4)*ub', G3).^2 + ...
+%         imgSteer3DG3(cos(2*pi/4)*ua' + sin(2*pi/4)*ub', G3).^2 + ...
+%         imgSteer3DG3(cos(3*pi/4)*ua' + sin(3*pi/4)*ub', G3).^2;
 end
+
+motion_energy = energy4channel{1} + energy4channel{2} + energy4channel{3} + energy4channel{4};
 
 % perform aggregation only if kernel is specified
 if agg_size > 0
     motion_energy = imfilter(imfilter(imfilter(motion_energy,g),g'),reshape(g,1,1,length(g)));
+    for i = 1:4 
+        energy4channel{1}= imfilter(imfilter(imfilter(energy4channel{1},g),g'),reshape(g,1,1,length(g)));
+    end
 end
 
 end

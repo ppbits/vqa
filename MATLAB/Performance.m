@@ -1,4 +1,4 @@
-function [srcc, krcc, plcc, RMSE] = performance(predictions, dmos, selected_videos, tag, printToFile)
+function [srcc, krcc, plcc, RMSE] = Performance(predictions, dmos, selected_videos, tag, printToFile)
 if nargin < 5
     printToFile = true;
 end
@@ -25,23 +25,23 @@ beta(3) = mean(predictions);
 beta(4) = 0.1;
 beta(5) = 0.1;
 %fitting a curve using the data
-[bayta ehat,J] = nlinfit(predictions,mos,@logistic,beta, statset('Display','off'));
+[bayta ehat,J] = nlinfit(predictions,mos,@Logistic,beta, statset('Display','off'));
 %given a ssim value, predict the correspoing mos (ypre) using the fitted curve
-[ypre junk] = nlpredci(@logistic,predictions,bayta,ehat,J);
+[ypre junk] = nlpredci(@Logistic,predictions,bayta,ehat,J);
 RMSE = sqrt(sum((ypre - mos).^2) / length(mos));%root meas squared error
 plcc = corr(mos, ypre, 'type','Pearson'); %pearson linear coefficient
 
-% 
-fprintf([tag ':\tSRCC = %3.4f, KRCC = %3.4f, PLCC = %3.4f, RMSE = %3.4f\n'], ...
-    abs(srcc), abs(krcc), abs(plcc), RMSE);
-%
+format_str =[tag ':\tSRCC = %3.4f, KRCC = %3.4f, PLCC = %3.4f, RMSE = %3.4f\n'];
+
+str = sprintf(format_str, abs(srcc), abs(krcc), abs(plcc), RMSE);
+WriteLog(str);
+
+fprintf(str);
 
 if printToFile
     fid = fopen('Results.txt', 'a');
     if fid~=0
-        fprintf(fid, [tag ':\tSRCC = %3.4f, KRCC = %3.4f, PLCC = %3.4f, RMSE = %3.4f\r\n'], ...
-            abs(srcc), abs(krcc), abs(plcc), abs(RMSE));
-    
+        fprintf(fid, str);
     end
     fprintf(fid, '\r\n');
     fclose(fid);

@@ -3,7 +3,7 @@
 % of the same size (as frame_size)
 
 %function [Y U V]=Read_YUV(FilePath,frame_size)
-function video = Read_YUV(FilePath, frame_size, color2gray)
+function video = ReadYUV(FilePath, frame_size, color2gray)
 if nargin < 3
     color2gray = true;
 end

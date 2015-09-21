@@ -2,14 +2,14 @@
 %
 % Contact: dante.peng@gmail.com
 % Copyright (c) Peng Peng
-function dist_types = GetDistortionTypes(database)
+function dist_types = GetDistortionTypes(database, n)
 
 fprintf('Getting distortion types for the %s database...\n', database);
 
 if(strcmp(database, 'LiveMobile'))
     % Create distion types array
-    dist_types = zeros(200, 1);
-    res = mod(0:199, 20);
+    dist_types = zeros(n, 1);
+    res = mod(0:n-1, 20);
     dist_types(res < 4) = 1; % Compression
     dist_types(res >= 4 & res < 8) = 2; % Frame freeze
     dist_types(res >= 8 & res < 11) = 3; % Rate adaptation

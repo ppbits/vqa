@@ -1,4 +1,4 @@
-function s = combineSaliency(s1, s2)
+function s = CombineSaliency(s1, s2)
 len = size(s1,3);
 
 s = zeros(size(s1));
@@ -11,9 +11,6 @@ for i = 1:len
     max2 = max(f2(:));
     f1_n = (f1 - min1)/(max1-min1);
     f2_n = (f2 - min2)/(max2-min2);
-%     std1 = std(f1(:));
-%     std2 = std(f2(:));
     s(:,:,i) = f1_n + f1_n.*f2_n;
 end
-
 end

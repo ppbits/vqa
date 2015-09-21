@@ -1,5 +1,5 @@
 % compute center bias map for visual attention
-function map = computeCenterBias(h, w)
+function map = ComputeCenterBias(h, w)
 center = [h/2 w/2];
 map  = zeros(h, w);
 % normalization factor

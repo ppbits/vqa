@@ -1,4 +1,4 @@
-function yhat = logistic(bayta,X)
+function yhat = Logistic(bayta,X)
 
 bayta1 = bayta(1); 
 bayta2 = bayta(2); 
