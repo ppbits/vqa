@@ -21,7 +21,7 @@ if ~exist(score_file, 'file')
     [mScore, scorePF] = ComputeMotionQuality(ref_video, dist_video, true, true); %false);
     save(score_file,  'mScore', 'scorePF');
     t1 = toc(t0);
-    fprintf('Elapsed time on processing the %d-th video: %3.4f seconds.\n\n', i, t1);
+    fprintf('Elapsed time on evaluating motion quality of video %s: %3.4f seconds.\n\n', dist_filename, t1);
 else
     scores_struct = load(score_file);
     mScore = scores_struct.mScore;

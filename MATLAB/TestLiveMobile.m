@@ -2,7 +2,10 @@
 %
 % Contact: dante.peng@gmail.com
 % Copyright (c) Peng Peng
-function TestLiveMobile(dist_type, mode)
+function TestLiveMobile(dist_type, mode, scale)
+if nargin < 3
+    scale = 64;
+end
 if nargin < 2
     mode = 'mobile';
 end
@@ -45,11 +48,11 @@ total_file_num = length(dist_names_all);
 % Get distortion types
 dist_types = GetDistortionTypes('LiveMobile', total_file_num);
  
-if dist_type == 0
+if dist_type == 0 % all distortion types
     selected_videos = true(total_file_num,1);
-elseif dist_type > 0
+elseif dist_type > 0 % select a single distortion
     selected_videos = (dist_types == dist_type);
-else
+else % exclude the distortion type 'abs(dist_type)'
     selected_videos = (dist_types ~= abs(dist_type));
 end
 
@@ -66,34 +69,32 @@ spatial_mScore_all = 1 - mScoreAll(selected_videos);
 %% Compute Overall Quality
 motion_mScore_all = zeros(nfile, 1);
 
-for scale = [64 ] %128 256]
-    motion_score_folder = fullfile(score_path, int2str(scale));
-    if(~isdir(motion_score_folder))
-        fprintf('Creating score folder %s...\n', motion_score_folder);
-        mkdir(motion_score_folder);
-    end
-    for i = 1:nfile
-	% Get the distorted file name
-        dist_filename = dist_filenames{i};
-	% Get the original/reference file name based on the distorted file name
-        ref_filename = strcat(dist_filenames{i}(1:2), '_org');
-
-	% Get per-frame moiton-quality scores ('scorePF') and the overall quality score ('mScore')
-	% 'mScore' is the mean value of 'scorePF' over each column
-        [mScore, scorePF] = GetMotionScores(motion_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename, scale);
-
-	disp(size(mScore));
-	% Select the metric
-        motion_mScore_all(i) = mScore;
-    end
-
-    % Combine the spatial quality score and motion quality score
-    final_mScore_all = spatial_mScore_all .* motion_mScore_all;
-    
-    fprintf('Scale = %d\n', scale);
-    Performance(spatial_mScore_all, dmos, true(nfile, 1), strcat('Spatial-', int2str(scale)));
-    Performance(motion_mScore_all, dmos, true(nfile, 1), strcat('Motion-', int2str(scale)));
-    Performance(final_mScore_all, dmos, true(nfile, 1), strcat('Overall-', int2str(scale)));
+motion_score_folder = fullfile(score_path, int2str(scale));
+if(~isdir(motion_score_folder))
+    fprintf('Creating score folder %s...\n', motion_score_folder);
+    mkdir(motion_score_folder);
 end
+for i = 1:nfile
+    % Get the distorted file name
+    dist_filename = dist_filenames{i};
+    % Get the original/reference file name based on the distorted file name
+    ref_filename = strcat(dist_filenames{i}(1:2), '_org');
+
+    % Get per-frame moiton-quality scores ('scorePF') and the overall quality score ('mScore')
+    % 'mScore' is the mean value of 'scorePF' over each column
+    [mScore, scorePF] = GetMotionScores(motion_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename, scale);
+
+    disp(size(mScore));
+    % Select the metric
+    motion_mScore_all(i) = mScore;
+end
+
+% Combine the spatial quality score and motion quality score
+final_mScore_all = spatial_mScore_all .* motion_mScore_all;
+
+fprintf('Scale = %d\n', scale);
+Performance(spatial_mScore_all, dmos, true(nfile, 1), strcat('Spatial-', int2str(scale)));
+Performance(motion_mScore_all, dmos, true(nfile, 1), strcat('Motion-', int2str(scale)));
+Performance(final_mScore_all, dmos, true(nfile, 1), strcat('Overall-', int2str(scale)));
 
 fprintf('\nDone!\n');

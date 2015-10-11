@@ -53,7 +53,6 @@ end
 % Date: Sept 20, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function qPF = Minkowski(absDiffVols, beta, volSI, motionWeights, applyMotionTuning, applySaliency)
-volSI_sumPF = sum(sum(volSI));
 nChannel = size(absDiffVols, 1);% number of filters + 1
 nPixelPF = size(absDiffVols{1, 1},1) * size(absDiffVols{1, 1}, 2);
 
@@ -69,11 +68,12 @@ else % With motion tuning
     end
 end
 
-if applySaliency
-    s4 = s4.^(1/beta);
+s4 = s4.^(1/beta);
+if ~applySaliency
     qPF = sum(sum(s4))/nPixelPF;
 else
     s4_SI = s4 .* volSI;% self-info weighted
+    volSI_sumPF = sum(sum(volSI));
     qPF = sum(sum(s4_SI))./volSI_sumPF;
 end
 end
