@@ -1,7 +1,8 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (c) Mani Malek Esmaeili
 % This function reads a YUV file assuming that the file into RGB matrices
 % of the same size (as frame_size)
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %function [Y U V]=Read_YUV(FilePath,frame_size)
 function video = ReadYUV(FilePath, frame_size, color2gray)
 if nargin < 3

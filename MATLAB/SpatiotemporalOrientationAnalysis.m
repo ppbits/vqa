@@ -1,3 +1,14 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ---
+% Written by: Konstantinos G. Derpanis
+% PhD Candidate
+% York University
+% Toronto, Ontario, Canada
+% Bugs/Questions email me at: kosta@cs.yorku.ca
+% see York Universtiy Technical Report CS-2004-05 for analytic details
+%   located here: http://www.cs.yorku.ca/techreports/2004/CS-2004-05.html
+% ---
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [volSE, volSE_n] = SpatiotemporalOrientationAnalysis(...
     videoVol, allOrientations, G2H2OrG3, ...
     doMarginalize, filter_half_width)

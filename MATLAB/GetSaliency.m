@@ -1,3 +1,10 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Gets the saliency map based on self-information.
+%
+% Name: Peng Peng
+% Contact: dante.peng@gmail.com
+% Date: Sept 20, 2015
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function volSI = GetSaliency(volSE, useCenterBias, nbin, gfilter)
 if nargin < 4
     gfilter = false;

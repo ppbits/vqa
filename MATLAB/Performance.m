@@ -1,3 +1,16 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Gets the correlation between the predicted quality and subject quality.
+% 
+% 4 metrics included:
+%     (1) SRCC (Spearman's Rank Correlation Coefficient)
+%     (1) KRCC (Kendall's Rank Correlation Coefficient)
+%     (1) PLCC (Pearson's' Linear Correlation Coefficient)
+%     (1) RMSE (Root Mean Squared Error)
+%
+% Name: Peng Peng
+% Contact: dante.peng@gmail.com
+% Date: Sept 20, 2015
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [srcc, krcc, plcc, RMSE] = Performance(predictions, dmos, selected_videos, tag, printToFile)
 if nargin < 5
     printToFile = true;
