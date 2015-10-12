@@ -23,6 +23,7 @@ if ~exist(score_file, 'file')
     t1 = toc(t0);
     fprintf('Elapsed time on evaluating motion quality of video %s: %3.4f seconds.\n\n', dist_filename, t1);
 else
+    fprintf('Reading motion quality score for video %s at scale %d from file %s\n', dist_filename, scale, score_file);
     scores_struct = load(score_file);
     mScore = scores_struct.mScore;
     scorePF = scores_struct.scorePF;

@@ -1,4 +1,10 @@
-% compute center bias map for visual attention
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Compute center bias map for visual attention
+%
+% Name: Peng Peng
+% Contact: dante.peng@gmail.com
+% Date: Oct 11, 2015
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function map = ComputeCenterBias(h, w)
 center = [h/2 w/2];
 map  = zeros(h, w);

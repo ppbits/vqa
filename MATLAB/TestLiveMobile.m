@@ -3,7 +3,7 @@
 %
 % Name: Peng Peng
 % Contact: dante.peng@gmail.com
-% Date: Sept 20, 2015
+% Date: Oct 11, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function TestLiveMobile(dist_type, mode, scale)
 if nargin < 3
