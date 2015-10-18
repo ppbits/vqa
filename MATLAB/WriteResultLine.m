@@ -5,7 +5,7 @@
 % Contact: dante.peng@gmail.com
 % Date: Oct 17, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function WriteResults(str, mode)
+function WriteResultLine(str, mode)
 if(nargin < 2)
     mode = 'a';
 end

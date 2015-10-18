@@ -96,10 +96,9 @@ end
 % Combine the spatial quality score and motion quality score
 final_mScore_all = spatial_mScore_all .* motion_mScore_all;
 dist_type_name = GetDistortionTypeName('LiveMobile', dist_type);
-dist_type
-dist_type_name
-fprintf('Distortion Type %d: %s', dist_type, dist_type_name);
-WriteResultLine(dist_type_name, 'a');
+tag = sprintf('%s - %s\n', mode, dist_type_name);
+fprintf(tag);
+WriteResult(tag);
 Performance(spatial_mScore_all, dmos, true(nfile, 1), strcat('Spatial-', int2str(scale)));
 Performance(motion_mScore_all, dmos, true(nfile, 1), strcat('Motion-', int2str(scale)));
 Performance(final_mScore_all, dmos, true(nfile, 1), strcat('Overall-', int2str(scale)));

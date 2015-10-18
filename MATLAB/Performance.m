@@ -52,5 +52,5 @@ WriteLog(str);
 fprintf(str);
 
 if printToFile
-    WriteResults(str, 'a');
+    WriteResult(str, 'a');
 end
