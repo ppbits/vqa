@@ -87,7 +87,6 @@ for i = 1:nfile
     % 'mScore' is the mean value of 'scorePF' over each column
     [mScore, scorePF] = GetMotionScores(motion_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename, scale);
 
-    disp(size(mScore));
     % Select the metric
     motion_mScore_all(i) = mScore;
 end
