@@ -5,15 +5,15 @@
 % Contact: dante.peng@gmail.com
 % Date: Oct 11, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function TestLiveMobile(dist_type, mode, scale)
+function TestLiveMobile(mode, scale, dist_type)
 if nargin < 3
-    scale = 64;
+    mode = 'phone';
 end
 if nargin < 2
-    mode = 'mobile';
+    scale = 64;
 end
 if nargin < 1
-    dist_type = 0;
+    dist_type = -2;
 end
 
 %% Prepare Data
@@ -36,14 +36,14 @@ load(fullfile(data_path, 'names_tablet.mat'));
 % Load 'dmos_mobile', 'dmos_tablet', 'std_dmos_mobile', 'std_dmos_tablet'.
 load(fullfile(data_path, 'dmos_final.mat'));
 
-if strcmp(mode, 'mobile')
+if strcmp(mode, 'phone')
     dmos_all = dmos_mobile;
     dist_names_all = dist_names;
 elseif strcmp(mode, 'tablet')
     dmos_all = dmos_tablet;
     dist_names_all = names_tablet;
 else
-    error('Wrong mode. Please select mobile or tablet.');
+    error('Wrong mode. Please select phone or tablet.');
 end
 
 total_file_num = length(dist_names_all);
@@ -62,7 +62,8 @@ end
 dmos = dmos_all(selected_videos);
 dist_filenames = dist_names(selected_videos);
 nfile = length(dist_filenames);
-fprintf('Selected videos: %d.\nDistortion type: %d.\n', nfile, dist_type);
+fprintf('Subjective-evaluation device type: %s\n', mode);
+fprintf('Number of selected videos: %d\n', nfile);
 
 %% Load spatial quality (Multi-scale SSIM)
 load(fullfile(score_path, 'liveM_MSSIM.mat')); 
@@ -78,6 +79,7 @@ if(~isdir(motion_score_folder))
     mkdir(motion_score_folder);
 end
 for i = 1:nfile
+    fprintf('Video #: %d\n', i);
     % Get the distorted file name
     dist_filename = dist_filenames{i};
     % Get the original/reference file name based on the distorted file name
@@ -93,8 +95,11 @@ end
 
 % Combine the spatial quality score and motion quality score
 final_mScore_all = spatial_mScore_all .* motion_mScore_all;
-
-fprintf('Scale = %d\n', scale);
+dist_type_name = GetDistortionTypeName('LiveMobile', dist_type);
+dist_type
+dist_type_name
+fprintf('Distortion Type %d: %s', dist_type, dist_type_name);
+WriteResultLine(dist_type_name, 'a');
 Performance(spatial_mScore_all, dmos, true(nfile, 1), strcat('Spatial-', int2str(scale)));
 Performance(motion_mScore_all, dmos, true(nfile, 1), strcat('Motion-', int2str(scale)));
 Performance(final_mScore_all, dmos, true(nfile, 1), strcat('Overall-', int2str(scale)));

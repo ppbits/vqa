@@ -6,9 +6,6 @@
 % Date: Sept 20, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function dist_types = GetDistortionTypes(database, n)
-
-fprintf('Getting distortion types for the %s database...\n', database);
-
 if(strcmp(database, 'LiveMobile'))
     % Create distion types array
     dist_types = zeros(n, 1);

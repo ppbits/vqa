@@ -52,10 +52,5 @@ WriteLog(str);
 fprintf(str);
 
 if printToFile
-    fid = fopen('Results.txt', 'a');
-    if fid~=0
-        fprintf(fid, str);
-    end
-    fprintf(fid, '\r\n');
-    fclose(fid);
+    WriteResults(str, 'a');
 end
