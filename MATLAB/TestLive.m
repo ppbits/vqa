@@ -52,17 +52,22 @@ fprintf('Number of selected videos: %d\n', nfile);
 
 %% Load spatial quality (Multi-scale SSIM)
 % TODO: To be calculated
-load(fullfile(score_path, 'live_MSSIM.mat')); 
-spatial_scorePF_all = scoresPerFrameAll(selected_videos);
-spatial_mScore_all = 1 - mScoreAll(selected_videos);
+%load(fullfile(score_path, 'live_MSSIM.mat')); 
+%spatial_scorePF_all = scoresPerFrameAll(selected_videos);
+%spatial_mScore_all = 1 - mScoreAll(selected_videos);
 
 %% Compute Overall Quality
 motion_mScore_all = zeros(nfile, 1);
 
 motion_score_folder = fullfile(score_path, strcat('motion_', int2str(scale)));
+spatial_score_folder = fullfile(score_path, 'spatial');
 if(~isdir(motion_score_folder))
     fprintf('Creating score folder %s...\n', motion_score_folder);
     mkdir(motion_score_folder);
+end
+if(~isdir(spatial_score_folder))
+    fprintf('Creating score folder %s...\n', spatial_score_folder);
+    mkdir(spatial_score_folder);
 end
 for i = 1:nfile
     fprintf('Video #: %d\n', i);
@@ -75,9 +80,12 @@ for i = 1:nfile
     % Get per-frame moiton-quality scores ('scorePF') and the overall quality score ('mScore')
     % 'mScore' is the mean value of 'scorePF' over each column
     [mScore, scorePF] = GetQualityScores(@ComputeMotionQuality, motion_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename, scale);
-
-    % Select the metric
     motion_mScore_all(i) = mScore;
+
+    % Get per-frame spatial-quality scores ('spatial_scorePF') and the overall spatial quality score ('spatial_mScore')
+    % 'spatial_mScore' is the mean value of 'spatial_scorePF' over each column
+    [spatial_mScore, spatial_scorePF] = GetQualityScores(@ComputeSpatialQuality, spatial_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename);
+    spatial_mScore_all(i) = 1 - spatial_mScore;
 end
 
 % Combine the spatial quality score and motion quality score

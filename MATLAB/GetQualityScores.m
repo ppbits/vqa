@@ -9,6 +9,10 @@
 % Date: Oct 18, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [mScore, scorePF] = GetQualityScores(ComputeQualityHandle, score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename, scale)
+if(nargin < 8)
+    % Full scale (No sub-sampling)
+    scale = frame_size(1);
+end
 score_file = sprintf('%s/%s.mat', score_folder, dist_filename);
 if ~exist(score_file, 'file')
     t0 = tic;
