@@ -5,8 +5,10 @@
 % Contact: dante.peng@gmail.com
 % Date: Sept 20, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [q, qPF] =  ComputeMotionQuality(v1, v2, applyMotionTuning, applySaliency)
+function [q, qPF] =  ComputeMotionQuality(v1, v2)
 %% parameter setting
+applyMotionTuning = true;
+applySaliency = true;
 orientationSet = 2;
 G2H2OrG3 = 1; % G3 filter
 filter_half_width = 6;

@@ -17,13 +17,25 @@ if(strcmp(database, 'LiveMobile'))
      'Rate Adaption',
      'Temporal Dynamics',
      'Wireless Channel Packet-loss'};
-
-    if(index == 0)
-        name = 'All';
-    else if(index < 0)
-        name = char(strcat('All (except for', {' '}, names{abs(index)}, ')'));
-    else
-        name = names{index};
+elseif(strcmp(database, 'Live'))
+    if(index > 4 | index < -4)
+        error('Distortion type index must be in the range of [-4, 4]');
     end
+
+    names = { 
+     'Wireless Distortions',
+     'IP Distortions',
+     'H.264 Compression',
+     'MPEG-2 Compression'};
+else
+    error('Unknown database!');
+end
+
+if(index == 0)
+    name = 'All';
+else if(index < 0)
+    name = char(strcat('All (except for', {' '}, names{abs(index)}, ')'));
+else
+    name = names{index};
 end
 end

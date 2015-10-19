@@ -5,8 +5,9 @@
 % Contact: dante.peng@gmail.com
 % Date: Sept 20, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function dist_types = GetDistortionTypes(database, n)
+function dist_types = GetDistortionTypes(database)
 if(strcmp(database, 'LiveMobile'))
+    n = 200;
     % Create distion types array
     dist_types = zeros(n, 1);
     res = mod(0:n-1, 20);
@@ -15,6 +16,15 @@ if(strcmp(database, 'LiveMobile'))
     dist_types(res >= 8 & res < 11) = 3; % Rate adaptation
     dist_types(res >= 11 & res < 16) = 4; % Temporal dynamics
     dist_types(res >= 16) = 5; % Wireless channel packet-loss
+elseif(strcmp(database, 'Live'))
+    n = 150;
+    % Create distion types array
+    dist_types = zeros(n, 1);
+    res = mod(0:n-1, 15);
+    dist_types(res < 4) = 1; % Wireless Distortions
+    dist_types(res >= 4 & res < 7) = 2; % IP Distortions
+    dist_types(res >= 7 & res < 11) = 3; % H.264 Compression
+    dist_types(res >= 11 & res < 15) = 4; % MPEG-2 Compression
 else
     error('Unknown database!');
 end
