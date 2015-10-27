@@ -7,13 +7,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function TestLiveMobile(mode, scale, dist_type)
 if nargin < 3
-    mode = 'phone';
+    dist_type = -2;
 end
 if nargin < 2
     scale = 64;
 end
 if nargin < 1
-    dist_type = -2;
+    mode = 'phone';
 end
 
 %% Prepare Data

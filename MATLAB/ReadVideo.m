@@ -8,24 +8,30 @@
 % Contact: dante.peng@gmail.com
 % Date: Sept 20, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function video = ReadVideo(yuv_path, mat_path, filename, size, scale)
-    mat_folder = sprintf('%s/%d', mat_path, scale);
-    if ~isdir(mat_folder)
-        sprintf('Creating output folder %s\n', mat_folder);
-        mkdir(mat_folder);
-    end
-    yuv_file = sprintf('%s/%s.yuv', yuv_path, filename);
-    mat_file = sprintf('%s/%s.mat', mat_folder, filename);
-    
-    if ~exist(mat_file, 'file')
-        fprintf('Reading YUV file %s...\n', yuv_file);
-        video = ReadYUV(yuv_file, size);
-        video = DownSample(video, scale);
-        fprintf('Saving video to %s...\n', mat_file);
-        save(mat_file, 'video');
-    else
-        fprintf('Loading video from %s...\n', mat_file);
-        video_struct = load(mat_file);
-        video = video_struct.video;
-    end
+function video = ReadVideo(yuv_path, mat_path, filename, frame_size, scale)
+yuv_file = sprintf('%s/%s.yuv', yuv_path, filename);
+% Never save a copy of the video without down-sampling
+if(frame_size(1) == scale)
+    video = ReadYUV(yuv_file, frame_size);
+    return;
+end
+
+mat_folder = sprintf('%s/%d', mat_path, scale);
+if ~isdir(mat_folder)
+    sprintf('Creating output folder %s\n', mat_folder);
+    mkdir(mat_folder);
+end
+mat_file = sprintf('%s/%s.mat', mat_folder, filename);
+
+if ~exist(mat_file, 'file')
+    fprintf('Reading YUV file %s...\n', yuv_file);
+    video = ReadYUV(yuv_file, frame_size);
+    video = DownSample(video, scale);
+    fprintf('Saving video to %s...\n', mat_file);
+    save(mat_file, 'video');
+else
+    fprintf('Loading video from %s...\n', mat_file);
+    video_struct = load(mat_file);
+    video = video_struct.video;
+end
 end

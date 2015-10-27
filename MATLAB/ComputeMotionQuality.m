@@ -19,7 +19,7 @@ nBin_n = 10;
 appGaussianFilter = true;
     
 nFrame = size(v1,3);
-overlap = 0; %default: 2*filter_half_width;
+overlap = filter_half_width;
 chunkSize =  13;
 step = chunkSize - overlap;
 nChunk = ceil((nFrame-2*filter_half_width) / step);

@@ -7,10 +7,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function TestLive(scale, dist_type)
 if nargin < 2
-    scale = 64;
+    dist_type = 0;
 end
 if nargin < 1
-    dist_type = 0;
+    scale = 64;
 end
 
 %% Prepare Data
@@ -24,9 +24,10 @@ yuv_path = fullfile(data_path, 'YUV');
 mat_path = fullfile(data_path, 'MAT');
 score_path = fullfile(data_path, 'scores');
 
-frame_size = [768 432];
-org_names = {'pa', 'rb', 'rh', 'tr', 'st', 'sf', 'bs', 'sh', 'mc', 'pr'};
-frame_rates = [25 25 25 25 25 25 25 50 50 50];
+frame_size = [432 768];
+%org_names = {'pa', 'rb', 'rh', 'tr', 'st', 'sf', 'bs', 'sh', 'mc', 'pr'};
+%frame_rates = [25 25 25 25 25 25 25 50 50 50];
+
 % Load the filenames of the distorted videos
 dist_names_all = importdata(fullfile(data_path, 'live_video_quality_seqs.txt'));
 total_file_num = length(dist_names_all);
@@ -53,11 +54,12 @@ fprintf('Number of selected videos: %d\n', nfile);
 
 %% Load spatial quality (Multi-scale SSIM)
 % TODO: To be calculated
-load(fullfile(data_path,'spatial_mScore_all.mat'));
-spatial_mScore_all = spatial_mScore_all(selected_videos);
+%load(fullfile(data_path,'spatial_mScore_all.mat'));
+%spatial_mScore_all = spatial_mScore_all(selected_videos);
 
 %% Compute Overall Quality
 motion_mScore_all = zeros(nfile, 1);
+spatial_mScore_all = zeros(nfile, 1);
 motion_score_folder = fullfile(score_path, strcat('motion_', int2str(scale)));
 spatial_score_folder = fullfile(score_path, 'spatial');
 if(~isdir(motion_score_folder))
@@ -83,8 +85,8 @@ for i = 1:nfile
 
     % Get per-frame spatial-quality scores ('spatial_scorePF') and the overall spatial quality score ('spatial_mScore')
     % 'spatial_mScore' is the mean value of 'spatial_scorePF' over each column
-    %[spatial_mScore, spatial_scorePF] = GetQualityScores(@ComputeSpatialQuality, spatial_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename);
-    %spatial_mScore_all(i) = 1 - spatial_mScore;
+    [spatial_mScore, spatial_scorePF] = GetQualityScores(@ComputeSpatialQuality, spatial_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename);
+    spatial_mScore_all(i) = 1 - spatial_mScore;
 end
 
 % Combine the spatial quality score and motion quality score
