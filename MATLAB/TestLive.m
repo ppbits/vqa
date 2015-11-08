@@ -38,7 +38,7 @@ subjective_data = importdata(fullfile(data_path, 'live_video_quality_data.txt'))
 dmos_all = subjective_data(:, 1);
 
 % Get distortion types
-dist_types = GetDistortionTypes('Live');
+dist_types = GetDistortionTypes('Live', total_file_num);
  
 if dist_type == 0 % all distortion types
     selected_videos = true(total_file_num,1);

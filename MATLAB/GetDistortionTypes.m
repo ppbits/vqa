@@ -5,9 +5,8 @@
 % Contact: dante.peng@gmail.com
 % Date: Sept 20, 2015
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function dist_types = GetDistortionTypes(database)
+function dist_types = GetDistortionTypes(database, n)
 if(strcmp(database, 'LiveMobile'))
-    n = 200;
     % Create distion types array
     dist_types = zeros(n, 1);
     res = mod(0:n-1, 20);
@@ -17,7 +16,6 @@ if(strcmp(database, 'LiveMobile'))
     dist_types(res >= 11 & res < 16) = 4; % Temporal dynamics
     dist_types(res >= 16) = 5; % Wireless channel packet-loss
 elseif(strcmp(database, 'Live'))
-    n = 150;
     % Create distion types array
     dist_types = zeros(n, 1);
     res = mod(0:n-1, 15);

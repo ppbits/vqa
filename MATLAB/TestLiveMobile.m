@@ -49,7 +49,7 @@ end
 total_file_num = length(dist_names_all);
 
 % Get distortion types
-dist_types = GetDistortionTypes('LiveMobile');
+dist_types = GetDistortionTypes('LiveMobile', total_file_num);
  
 if dist_type == 0 % all distortion types
     selected_videos = true(total_file_num,1);
