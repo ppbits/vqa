@@ -73,6 +73,8 @@ fprintf('Number of selected videos: %d\n', nfile);
 %% Compute Overall Quality
 motion_mScore_all = zeros(nfile, 1);
 spatial_mScore_all = zeros(nfile, 1);
+motion_tpScore_all = zeros(nfile, 1);
+spatial_tpScore_all = zeros(nfile, 1);
 
 motion_score_folder = fullfile(score_path, strcat('motion_', int2str(scale)));
 spatial_score_folder = fullfile(score_path, 'spatial');
@@ -96,21 +98,27 @@ for i = 1:nfile
     % 'motion_mScore' is the mean value of 'motion_scorePF' over each column
     [motion_mScore, motion_scorePF] = GetQualityScores(@ComputeMotionQuality, motion_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename, scale);
     motion_mScore_all(i) = motion_mScore;
-
+    motion_tpScore_all(i) = TemporalPooling(motion_scorePF);
+    
     % Get per-frame spatial-quality scores ('spatial_scorePF') and the overall spatial quality score ('spatial_mScore')
     % 'spatial_mScore' is the mean value of 'spatial_scorePF' over each column
     [spatial_mScore, spatial_scorePF] = GetQualityScores(@ComputeSpatialQuality, spatial_score_folder, yuv_path, mat_path, frame_size, ref_filename, dist_filename);
     spatial_mScore_all(i) = 1 - spatial_mScore;
+    spatial_tpScore_all(i) = TemporalPooling(1-spatial_scorePF);
 end
 
 % Combine the spatial quality score and motion quality score
 final_mScore_all = spatial_mScore_all .* motion_mScore_all;
+final_tpScore_all = spatial_tpScore_all .* motion_tpScore_all;
 dist_type_name = GetDistortionTypeName('LiveMobile', dist_type);
 tag = sprintf('%s - %s\n', mode, dist_type_name);
 fprintf(tag);
 WriteResult(tag);
 Performance(spatial_mScore_all, dmos, true(nfile, 1), strcat('Spatial-', int2str(scale)));
+Performance(spatial_tpScore_all, dmos, true(nfile, 1), strcat('TP-Spatial-', int2str(scale)));
 Performance(motion_mScore_all, dmos, true(nfile, 1), strcat('Motion-', int2str(scale)));
+Performance(motion_tpScore_all, dmos, true(nfile, 1), strcat('TP-Motion-', int2str(scale)));
 Performance(final_mScore_all, dmos, true(nfile, 1), strcat('Overall-', int2str(scale)));
+Performance(final_tpScore_all, dmos, true(nfile, 1), strcat('TP-Overall-', int2str(scale)));
 
 fprintf('\nDone!\n');
