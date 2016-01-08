@@ -53,4 +53,8 @@ fprintf(str);
 
 if printToFile
     WriteResult(str, 'a');
+
+    %latex_format_str = [tag '(latex):\t%3.4f & %3.4f & %3.4f & %3.4f\n' ];
+    %latex_str = sprintf(latex_format_str, abs(srcc), abs(krcc), abs(plcc), RMSE);
+    %WriteResult(latex_str, 'a');
 end
